@@ -195,18 +195,19 @@ class InMemoryStorage:
 |--------|-------|--------|
 | ID | `id` | Right-aligned integer |
 | Title | `title` | Left-aligned, truncated at 40 chars |
+| Description | `description` | Left-aligned, truncated at 30 chars |
 | Status | `completed` | "✓" (green) or "○" (dim) |
 | Created | `created_at` | "YYYY-MM-DD HH:MM" |
 
 **Example Output**:
 ```
-┌────┬────────────────────────────────────────┬────────┬──────────────────┐
-│ ID │ Title                                  │ Status │ Created          │
-├────┼────────────────────────────────────────┼────────┼──────────────────┤
-│  1 │ Buy groceries                          │   ○    │ 2025-12-27 10:30 │
-│  2 │ Complete Phase I implementation        │   ✓    │ 2025-12-27 11:00 │
-│  3 │ Review pull request                    │   ○    │ 2025-12-27 11:30 │
-└────┴────────────────────────────────────────┴────────┴──────────────────┘
+┌────┬──────────────────────┬────────────────────────────────┬────────┬──────────────────┐
+│ ID │ Title                │ Description                    │ Status │ Created          │
+├────┼──────────────────────┼────────────────────────────────┼────────┼──────────────────┤
+│  1 │ Buy groceries        │ Milk, eggs, bread              │   ○    │ 2025-12-27 10:30 │
+│  2 │ Complete Phase I     │ Console todo app               │   ✓    │ 2025-12-27 11:00 │
+│  3 │ Review pull request  │                                │   ○    │ 2025-12-27 11:30 │
+└────┴──────────────────────┴────────────────────────────────┴────────┴──────────────────┘
 ```
 
 ---

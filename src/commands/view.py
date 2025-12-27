@@ -15,7 +15,7 @@ class ViewTasksCommand(Command):
     """Command for viewing all tasks.
 
     Displays all tasks in a formatted Rich table with
-    ID, Title, Status, and Created date columns.
+    ID, Title, Description, Status, and Created date columns.
     """
 
     # Status indicators
@@ -65,7 +65,8 @@ class ViewTasksCommand(Command):
 
         # Add columns
         table.add_column("ID", style="dim", justify="right", width=5)
-        table.add_column("Title", style="white", min_width=20, max_width=40)
+        table.add_column("Title", style="white", min_width=15, max_width=40)
+        table.add_column("Description", style="dim white", min_width=10, max_width=30)
         table.add_column("Status", justify="center", width=8)
         table.add_column("Created", style="dim", width=16)
 
@@ -79,9 +80,15 @@ class ViewTasksCommand(Command):
             if len(title) > 40:
                 title = title[:37] + "..."
 
+            # Truncate long descriptions
+            description = task.description or ""
+            if len(description) > 30:
+                description = description[:27] + "..."
+
             table.add_row(
                 str(task.id),
                 title,
+                description,
                 status,
                 created,
             )

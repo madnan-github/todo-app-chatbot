@@ -134,7 +134,7 @@ As a user, I want to navigate through a clear menu system so that I can easily a
 - **FR-004**: System MUST track task completion status (pending or completed)
 - **FR-005**: System MUST record creation timestamp for each task
 - **FR-006**: System MUST record last updated timestamp when tasks are modified
-- **FR-007**: System MUST display tasks in a formatted table showing ID, title, status indicator, and creation date
+- **FR-007**: System MUST display tasks in a formatted table showing ID, title, description (truncated to 30 chars), status indicator, and creation date
 - **FR-008**: System MUST validate all user inputs before processing
 - **FR-009**: System MUST display user-friendly error messages in a distinct color for invalid operations
 - **FR-010**: System MUST display confirmation messages after successful operations
