@@ -36,13 +36,58 @@ You are an expert AI assistant specializing in Spec-Driven Development (SDD). Yo
 | Constitution work | `constitution_creation` skill |
 | Feature specs | `spec_writing` skill |
 | Python CLI app | `python-console-agent` + `cli_interface_design` skill |
-| Next.js frontend | `nextjs-frontend-agent` |
-| FastAPI backend | `fastapi-backend-agent` |
-| Authentication | `authentication-agent` |
-| Data models | `data_validation` skill |
+| Next.js frontend | `nextjs-frontend-agent` + frontend skills |
+| FastAPI backend | `fastapi-backend-agent` + backend skills |
+| Authentication | `authentication-agent` + `better_auth_setup` + `jwt_verification` skills |
+| Data models | `data_validation` + `sqlmodel_schema_design` + `pydantic_schema_creation` skills |
 | Storage classes | `in_memory_storage` skill |
 | Command patterns | `command_pattern_implementation` skill |
 | Project structure | `python_project_structure` or `spec_kit_structure` skill |
+| API design | `restful_api_design` skill |
+| Database setup | `database_connection_setup` skill |
+| Protected routes | `protected_route_implementation` skill |
+
+## Available Skills (22 Total)
+
+### Phase I Skills (Python CLI)
+1. `python_project_structure` - Python 3.13+ project setup with UV
+2. `cli_interface_design` - Rich library CLI with menus and tables
+3. `command_pattern_implementation` - Command pattern for operations
+4. `data_validation` - Pydantic validation with Field constraints
+5. `in_memory_storage` - In-memory dict storage with CRUD operations
+
+### Phase II Skills (Full-Stack Web)
+
+**Frontend (Next.js 16+)**
+6. `nextjs_app_router_setup` - Next.js App Router + TypeScript + Tailwind setup
+7. `server_component_patterns` - React Server Components with async/await
+8. `client_component_patterns` - Client Components with useState/useEffect
+9. `tailwind_styling` - Responsive design with Tailwind utility classes
+10. `api_client_creation` - Centralized API client with JWT injection
+11. `better_auth_setup` - Better Auth with Neon PostgreSQL + JWT
+
+**Backend (FastAPI)**
+12. `fastapi_project_setup` - FastAPI + SQLModel + uvicorn setup
+13. `sqlmodel_schema_design` - Database models with indexes and relationships
+14. `pydantic_schema_creation` - Request/response schemas with validation
+15. `database_connection_setup` - Neon PostgreSQL with connection pooling
+16. `restful_api_design` - RESTful endpoints with proper HTTP methods
+17. `jwt_verification` - JWT token verification middleware
+18. `protected_route_implementation` - User isolation and route protection
+
+### Universal Skills
+19. `constitution_creation` - Project constitution with principles
+20. `spec_writing` - Feature specifications with user stories
+21. `spec_kit_structure` - Spec-Kit Plus folder structure
+22. `claude_md_generation` - CLAUDE.md generation for projects
+
+## Available Agents (5 Total)
+
+1. `python-console-agent` - Python CLI applications (Phase I)
+2. `nextjs-frontend-agent` - Next.js frontend development (Phase II+)
+3. `fastapi-backend-agent` - FastAPI backend development (Phase II+)
+4. `authentication-agent` - Better Auth + JWT authentication (Phase II+)
+5. `spec-driven-dev` - Spec-Driven Development workflow
 
 4. **Invoke the Skill/Agent** - If a match exists, USE IT via the Skill or Task tool
 5. **Only proceed manually** if no skill/agent matches the task
@@ -238,8 +283,41 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
 
 ## Active Technologies
-- Python 3.13+ (per constitution Phase I requirements) (001-console-todo-crud)
-- In-Memory Dict (simplest solution for Phase I, no persistence) (001-console-todo-crud)
+
+### Phase I (Console App) - Completed
+- Python 3.13+
+- UV package manager
+- Rich library for CLI
+- Pydantic for validation
+- In-memory dict storage
+
+### Phase II (Full-Stack Web) - In Progress
+**Frontend:**
+- Next.js 16+ (App Router)
+- React 19
+- TypeScript 5.x
+- Tailwind CSS 3.4+
+- Better Auth (JWT authentication)
+
+**Backend:**
+- Python 3.13+
+- FastAPI 0.115+
+- SQLModel 0.0.22
+- asyncpg 0.30+ (PostgreSQL driver)
+- python-jose (JWT verification)
+- passlib (password hashing)
+
+**Database:**
+- Neon Serverless PostgreSQL
+
+**Development:**
+- Claude Code
+- Spec-Kit Plus
+- Context7 MCP Server (with configured libraries)
 
 ## Recent Changes
-- 001-console-todo-crud: Added Python 3.13+ (per constitution Phase I requirements)
+- Phase I: Completed console todo CRUD application with in-memory storage
+- Phase II: Created 13 new skills for full-stack web development
+  - 6 Frontend skills (Next.js, React, Tailwind, Better Auth)
+  - 7 Backend skills (FastAPI, SQLModel, JWT, RESTful API)
+  - Updated CLAUDE.md with complete skill/agent inventory
