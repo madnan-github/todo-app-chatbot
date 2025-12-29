@@ -13,8 +13,12 @@ export function useTasks() {
       completed?: boolean;
       priority?: string;
       tag_id?: number;
+      tag_ids?: string;  // comma-separated for multiple tags
       search?: string;
+      sort_by?: "created_at" | "updated_at" | "title" | "priority";
+      sort_order?: "asc" | "desc";
       page?: number;
+      per_page?: number;
     }) => {
       setIsLoading(true);
       setError(null);

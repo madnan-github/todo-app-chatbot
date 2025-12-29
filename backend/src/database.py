@@ -4,14 +4,26 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlmodel import SQLModel
 from src.config import settings
 
-# Create async engine for Neon PostgreSQL
-engine = create_async_engine(
-    settings.database_url,
-    echo=settings.debug,
-    pool_size=5,
-    max_overflow=10,
-    pool_pre_ping=True,
-)
+# Determine if using SQLite (for local development) or PostgreSQL
+is_sqlite = settings.database_url.startswith("sqlite")
+
+# Create async engine - handle both PostgreSQL and SQLite
+if is_sqlite:
+    # SQLite needs different settings
+    engine = create_async_engine(
+        settings.database_url,
+        echo=settings.debug,
+        connect_args={"check_same_thread": False},
+    )
+else:
+    # PostgreSQL with connection pooling
+    engine = create_async_engine(
+        settings.database_url,
+        echo=settings.debug,
+        pool_size=5,
+        max_overflow=10,
+        pool_pre_ping=True,
+    )
 
 # Create async session factory
 async_session_maker = async_sessionmaker(

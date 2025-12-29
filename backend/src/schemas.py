@@ -65,6 +65,19 @@ class TagResponse(TagBase):
         from_attributes = True
 
 
+class TagListResponse(BaseModel):
+    """Schema for paginated tag list."""
+    tags: List[TagResponse]
+    total: int
+    page: int
+    per_page: int
+
+
+class TagAutocompleteResponse(BaseModel):
+    """Schema for tag autocomplete response."""
+    suggestions: List[str]
+
+
 # ============================================================================
 # Task Schemas
 # ============================================================================

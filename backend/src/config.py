@@ -1,13 +1,13 @@
 """Configuration module for environment variables."""
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
-    # Database
-    database_url: str = "postgresql+asyncpg://todo_user:todo_password@localhost:5432/todo_app"
+    # Database (default to SQLite for local development)
+    database_url: str = "sqlite+aiosqlite:///./todo_app.db"
 
     # JWT
     jwt_secret_key: str = "dev-secret-key-change-in-production"
@@ -26,9 +26,14 @@ class Settings(BaseSettings):
     # Logging
     log_level: str = "INFO"
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    # Better Auth
+    better_auth_secret: str = "dev-auth-secret-change-in-production"
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+        extra="ignore"
+    )
 
 
 @lru_cache()

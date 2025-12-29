@@ -43,6 +43,17 @@ export interface Tag {
   name: string;
 }
 
+export interface TagListResponse {
+  tags: Tag[];
+  total: number;
+  page: number;
+  per_page: number;
+}
+
+export interface TagAutocompleteResponse {
+  suggestions: string[];
+}
+
 // API Response types
 export interface TaskListResponse {
   tasks: Task[];

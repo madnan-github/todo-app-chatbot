@@ -1,18 +1,27 @@
 """FastAPI application entry point."""
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from src.config import settings
 from src.database import init_db
 from src.routes.auth import router as auth_router
 from src.routes.tasks import router as tasks_router
+from src.routes.tags import router as tags_router
+from src.routes.better_auth import router as better_auth_router, router_v1 as better_auth_v1_router
+from src.middleware import rate_limiter
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan events."""
     # Startup: Initialize database tables
-    await init_db()
+    try:
+        await init_db()
+        print("Database initialized successfully")
+    except Exception as e:
+        print(f"Warning: Database initialization failed: {e}")
+        print("Server will start but database operations will fail")
     yield
     # Shutdown: Cleanup if needed
 
@@ -36,6 +45,34 @@ app.add_middleware(
 )
 
 
+# T179: Rate limiting middleware
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    """Apply rate limiting to all API endpoints except health check."""
+    # Skip rate limiting for health check and docs
+    if request.url.path in ["/health", "/docs", "/redoc", "/openapi.json"]:
+        return await call_next(request)
+
+    is_limited, remaining, reset_time = rate_limiter.is_rate_limited(request)
+
+    if is_limited:
+        return JSONResponse(
+            status_code=429,
+            content={
+                "error": "Rate limit exceeded",
+                "message": f"Too many requests. Please wait {reset_time} seconds.",
+                "retry_after": reset_time,
+            },
+            headers={"Retry-After": str(reset_time)},
+        )
+
+    response = await call_next(request)
+    # Add rate limit headers
+    response.headers["X-RateLimit-Remaining"] = str(remaining)
+    response.headers["X-RateLimit-Limit"] = str(rate_limiter.max_requests)
+    return response
+
+
 # Health check endpoint
 @app.get("/health")
 async def health_check():
@@ -56,3 +93,6 @@ async def root():
 # Include routers
 app.include_router(auth_router)
 app.include_router(tasks_router)
+app.include_router(tags_router)
+app.include_router(better_auth_router)  # Better Auth compatible endpoints at /api/auth
+app.include_router(better_auth_v1_router)  # Better Auth compatible endpoints at /api/v1

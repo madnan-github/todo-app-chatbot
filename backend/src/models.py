@@ -1,8 +1,11 @@
 """SQLModel database entities."""
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, SQLModel, Relationship
+
+if TYPE_CHECKING:
+    pass
 
 
 class PriorityEnum(str, Enum):
@@ -10,6 +13,13 @@ class PriorityEnum(str, Enum):
     HIGH = "high"
     MEDIUM = "medium"
     LOW = "low"
+
+
+# Define TaskTag first since it's used as link_model
+class TaskTag(SQLModel, table=True):
+    """Junction table for Task-Tag many-to-many relationship."""
+    task_id: Optional[int] = Field(foreign_key="task.id", primary_key=True, default=None)
+    tag_id: Optional[int] = Field(foreign_key="tag.id", primary_key=True, default=None)
 
 
 class User(SQLModel, table=True):
@@ -37,15 +47,11 @@ class Task(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
     # Relationships
-    user: User = Relationship(back_populates="tasks")
-    task_tags: list["TaskTag"] = Relationship(back_populates="task")
+    user: "User" = Relationship(back_populates="tasks")
     tags: list["Tag"] = Relationship(
-        back_populates="task_tags",
-        link_model="TaskTag"
+        back_populates="tasks",
+        link_model=TaskTag
     )
-
-    class Config:
-        from_attributes = True
 
 
 class Tag(SQLModel, table=True):
@@ -55,26 +61,8 @@ class Tag(SQLModel, table=True):
     name: str = Field(min_length=1, max_length=50)
 
     # Relationships
-    user: User = Relationship(back_populates="tags")
-    task_tags: list["TaskTag"] = Relationship(back_populates="tag")
+    user: "User" = Relationship(back_populates="tags")
     tasks: list["Task"] = Relationship(
         back_populates="tags",
-        link_model="TaskTag"
+        link_model=TaskTag
     )
-
-    class Config:
-        from_attributes = True
-
-
-class TaskTag(SQLModel, table=True):
-    """Junction table for Task-Tag many-to-many relationship."""
-    task_id: int = Field(foreign_key="task.id", primary_key=True)
-    tag_id: int = Field(foreign_key="tag.id", primary_key=True)
-
-    # Relationships
-    task: Task = Relationship(back_populates="task_tags")
-    tag: Tag = Relationship(back_populates="task_tags")
-
-
-# Import for relationship resolution
-from src.models import User, Task, Tag, TaskTag  # noqa: F401, E402
