@@ -1,0 +1,242 @@
+openapi: 3.0.3
+info:
+  title: TaskFlow Authentication API
+  description: Cookie-based authentication endpoints (Better Auth compatible)
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+
+paths:
+  /api/v1/auth/signup:
+    post:
+      summary: Register new user
+      description: Creates a new user account and sets session cookie
+      operationId: signUp
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+      responses:
+        '201':
+          description: User created successfully
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: Session cookie (session_token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid input or email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/auth/signin:
+    post:
+      summary: Sign in user
+      description: Authenticates user and sets session cookie
+      operationId: signIn
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequest'
+      responses:
+        '200':
+          description: Successfully authenticated
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: Session cookie (session_token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/auth/signout:
+    post:
+      summary: Sign out user
+      description: Clears session cookie
+      operationId: signOut
+      tags:
+        - Authentication
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successfully signed out
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: Expired session cookie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+  /api/v1/auth/session:
+    get:
+      summary: Get current session
+      description: Returns current user and session information from cookie
+      operationId: getSession
+      tags:
+        - Authentication
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Session retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: No valid session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/auth/me:
+    get:
+      summary: Get current user (alias)
+      description: Alias for /session - returns current user information
+      operationId: getCurrentUser
+      tags:
+        - Authentication
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: User retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session_token
+      description: JWT session token stored in HttpOnly cookie
+
+  schemas:
+    SignUpRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          minLength: 8
+          example: securepassword123
+        name:
+          type: string
+          maxLength: 100
+          example: John Doe
+
+    SignInRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          example: securepassword123
+        rememberMe:
+          type: boolean
+          default: true
+          description: If true, session lasts 7 days; if false, session expires on browser close
+
+    AuthResponse:
+      type: object
+      description: Better Auth compatible response format
+      properties:
+        user:
+          $ref: '#/components/schemas/UserResponse'
+        session:
+          type: object
+          properties:
+            token:
+              type: string
+              description: JWT token (also set in cookie)
+            expiresAt:
+              type: string
+              format: date-time
+              description: Session expiration time
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        name:
+          type: string
+          nullable: true
+          example: John Doe
+        createdAt:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+          example: Invalid credentials
+        error_code:
+          type: string
+          example: INVALID_CREDENTIALS
+
+tags:
+  - name: Authentication
+    description: User authentication and session management
