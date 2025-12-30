@@ -4,7 +4,8 @@ from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from src.config import settings
-from src.database import init_db
+from src.database import init_db, engine
+from sqlalchemy import text
 from src.routes.auth import router as auth_router
 from src.routes.tasks import router as tasks_router
 from src.routes.tags import router as tags_router
@@ -36,6 +37,9 @@ app = FastAPI(
 
 # Configure CORS
 cors_origins = [origin.strip() for origin in settings.cors_origins.split(",")]
+if "http://localhost:3000" not in cors_origins:
+    cors_origins.append("http://localhost:3000")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
@@ -76,8 +80,21 @@ async def rate_limit_middleware(request: Request, call_next):
 # Health check endpoint
 @app.get("/health")
 async def health_check():
-    """Health check endpoint."""
-    return {"status": "healthy", "environment": settings.environment}
+    """Health check endpoint with database verification."""
+    db_status = "disconnected"
+    try:
+        # Verify database connection
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
+        db_status = "connected"
+    except Exception as e:
+        print(f"Database health check failed: {e}")
+
+    return {
+        "status": "ok",
+        "database": db_status,
+        "environment": settings.environment
+    }
 
 
 @app.get("/")

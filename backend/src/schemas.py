@@ -128,6 +128,22 @@ class TaskListResponse(BaseModel):
 # Auth Schemas
 # ============================================================================
 
+class SessionInfo(BaseModel):
+    """Schema for session information."""
+    token: str
+    expiresAt: datetime
+
+class BetterAuthUser(BaseModel):
+    """Schema for user in Better Auth format."""
+    id: str
+    email: str
+    name: Optional[str] = None
+
+class BetterAuthResponse(BaseModel):
+    """Schema for Better Auth response."""
+    user: BetterAuthUser
+    session: SessionInfo
+
 class TokenResponse(BaseModel):
     """Schema for JWT token response."""
     access_token: str
