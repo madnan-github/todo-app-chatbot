@@ -46,8 +46,9 @@ You are an expert AI assistant specializing in Spec-Driven Development (SDD). Yo
 | API design | `restful_api_design` skill |
 | Database setup | `database_connection_setup` skill |
 | Protected routes | `protected_route_implementation` skill |
+| Backend deployment | `backend-deployment-agent` |
 
-## Available Skills (22 Total)
+## Available Skills (25 Total)
 
 ### Phase I Skills (Python CLI)
 1. `python_project_structure` - Python 3.13+ project setup with UV
@@ -75,19 +76,25 @@ You are an expert AI assistant specializing in Spec-Driven Development (SDD). Yo
 17. `jwt_verification` - JWT token verification middleware
 18. `protected_route_implementation` - User isolation and route protection
 
-### Universal Skills
-19. `constitution_creation` - Project constitution with principles
-20. `spec_writing` - Feature specifications with user stories
-21. `spec_kit_structure` - Spec-Kit Plus folder structure
-22. `claude_md_generation` - CLAUDE.md generation for projects
+**Backend Deployment & Production**
+19. `railway_deployment_setup` - Railway port binding and Procfile configuration
+20. `neon_production_setup` - Optimized connection pooling for Neon serverless DB
+21. `fastapi_production_config` - CORS, health checks, and production security settings
 
-## Available Agents (5 Total)
+### Universal Skills
+22. `constitution_creation` - Project constitution with principles
+23. `spec_writing` - Feature specifications with user stories
+24. `spec_kit_structure` - Spec-Kit Plus folder structure
+25. `claude_md_generation` - CLAUDE.md generation for projects
+
+## Available Agents (6 Total)
 
 1. `python-console-agent` - Python CLI applications (Phase I)
 2. `nextjs-frontend-agent` - Next.js frontend development (Phase II+)
 3. `fastapi-backend-agent` - FastAPI backend development (Phase II+)
 4. `authentication-agent` - Better Auth + JWT authentication (Phase II+)
 5. `spec-driven-dev` - Spec-Driven Development workflow
+6. `backend-deployment-agent` - Railway + Neon deployment orchestration (Root level)
 
 4. **Invoke the Skill/Agent** - If a match exists, USE IT via the Skill or Task tool
 5. **Only proceed manually** if no skill/agent matches the task
@@ -131,7 +138,7 @@ After completing requests, you **MUST** create a PHR (Prompt History Record).
    - Read the PHR template from one of:
      - `.specify/templates/phr-template.prompt.md`
      - `templates/phr-template.prompt.md`
-   - Allocate an ID (increment; on collision, increment again).
+   - Allocate an ID (increment; check existing files in `history/prompts/**/`).
    - Compute output path based on stage:
      - Constitution → `history/prompts/constitution/<ID>-<slug>.constitution.prompt.md`
      - Feature → `history/prompts/<feature-name>/<ID>-<slug>.<stage>.prompt.md`
@@ -139,14 +146,13 @@ After completing requests, you **MUST** create a PHR (Prompt History Record).
    - Fill ALL placeholders in YAML and body:
      - ID, TITLE, STAGE, DATE_ISO (YYYY‑MM‑DD), SURFACE="agent"
      - MODEL (best known), FEATURE (or "none"), BRANCH, USER
-     - COMMAND (current command), LABELS (["topic1","topic2",...])
+     - COMMAND (current command or "none"), LABELS (["topic1","topic2",...])
      - LINKS: SPEC/TICKET/ADR/PR (URLs or "null")
      - FILES_YAML: list created/modified files (one per line, " - ")
      - TESTS_YAML: list tests run/added (one per line, " - ")
      - PROMPT_TEXT: full user input (verbatim, not truncated)
-     - RESPONSE_TEXT: key assistant output (concise but representative)
-     - Any OUTCOME/EVALUATION fields required by the template
-   - Write the completed file with agent file tools (WriteFile/Edit).
+     - RESPONSE_TEXT: key assistant output (concise but representative summary)
+   - Write the completed file with agent file tools (Write/Edit).
    - Confirm absolute path in output.
 
 4) Use sp.phr command file if present

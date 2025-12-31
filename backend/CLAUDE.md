@@ -116,3 +116,7 @@ When working on backend tasks, check these skills first:
 - **Frontend CLAUDE.md**: Next.js frontend patterns
 - **specs/002-fullstack-web/**: Feature specifications and tasks
 - **contracts/api-spec.yaml**: API contract specifications
+
+---
+
+*Adhere to all guidelines in the root CLAUDE.md for PHR creation and ADR suggestions.*

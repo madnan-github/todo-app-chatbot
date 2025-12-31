@@ -93,3 +93,7 @@ When working on frontend tasks, check these skills first:
 - **Root CLAUDE.md**: Project-wide rules and agent guidelines
 - **Backend CLAUDE.md**: FastAPI backend patterns
 - **specs/002-fullstack-web/**: Feature specifications and tasks
+
+---
+
+*Adhere to all guidelines in the root CLAUDE.md for PHR creation and ADR suggestions.*
