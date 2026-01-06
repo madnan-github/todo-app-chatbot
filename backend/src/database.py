@@ -12,7 +12,8 @@ from src.config import settings
 # Reference: https://neon.com/docs/connect/connection-pooling
 
 # Transform connection string for asyncpg if needed
-database_url = settings.database_url
+# Strip whitespace and newlines that may have been copied from Railway
+database_url = settings.database_url.strip()
 if database_url.startswith("postgresql://"):
     database_url = database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
