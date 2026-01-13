@@ -1,0 +1,85 @@
+openapi: 3.0.3
+info:
+  title: Todo AI Chatbot API
+  description: API for interacting with the Todo AI Chatbot that manages tasks through natural language
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Development server
+paths:
+  /api/{user_id}/chat:
+    post:
+      summary: Send a message to the AI chatbot
+      description: Process a user message and return AI response with any tool execution results
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID of the authenticated user
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversation_id:
+                  type: integer
+                  description: Optional conversation ID; creates new if not provided
+                  example: 123
+                message:
+                  type: string
+                  description: The user's message/command
+                  example: "Add buy groceries"
+              required:
+                - message
+      responses:
+        '200':
+          description: Successful response with AI message and tool execution results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation_id:
+                    type: integer
+                    description: The conversation ID (newly created or existing)
+                    example: 123
+                  response:
+                    type: string
+                    description: The AI-generated response to the user
+                    example: "✓ I added 'buy groceries' to your tasks"
+                  tool_calls:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tool_name:
+                          type: string
+                          description: Name of the tool that was called
+                          example: "add_task"
+                        result:
+                          type: object
+                          description: Result from the tool execution
+                      required:
+                        - tool_name
+                        - result
+                required:
+                  - conversation_id
+                  - response
+        '400':
+          description: Bad request - invalid input
+        '401':
+          description: Unauthorized - invalid or missing authentication
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: JWT token for authentication

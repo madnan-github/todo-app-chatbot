@@ -291,6 +291,8 @@ See `.specify/memory/constitution.md` for code quality, testing, performance, se
 ## Active Technologies
 - Python 3.13+ (existing `.python-version`) + FastAPI 0.115+, SQLModel 0.0.22, asyncpg 0.30+, uvicorn 0.30+ (004-backend-deployment)
 - Neon PostgreSQL (serverless, asyncpg driver) (004-backend-deployment)
+- Python 3.13+ (per constitution) + FastAPI, SQLModel, OpenAI Agents SDK, OpenRouter API, Better Auth, Neon PostgreSQL (005-todo-ai-chatbot)
+- PostgreSQL (Neon) with 3 tables (Task, Conversation, Message) (005-todo-ai-chatbot)
 
 ### Phase I (Console App) - Completed
 - Python 3.13+

@@ -153,7 +153,7 @@ Implement only what is specified—no premature optimization or feature creep.
 
 | Layer | Technology | Justification | Free Tier |
 |-------|------------|---------------|-----------|
-| LLM Provider | Groq | Fast inference, completely free tier | Generous rate limits |
+| LLM Provider | Openrouter | Fast inference, completely free tier | Generous rate limits |
 | AI Framework | OpenAI Agents SDK | Official SDK for agent development | N/A (uses Groq backend) |
 | MCP Server | Official MCP SDK | Model Context Protocol for tools | Open source |
 | Chat UI | OpenAI ChatKit | Standard chat interface | Domain allowlist required |
