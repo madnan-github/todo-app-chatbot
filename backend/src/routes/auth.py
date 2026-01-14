@@ -48,9 +48,9 @@ async def signup(
     expires_at = datetime.utcnow() + expires_delta
     access_token = create_access_token(user_id=new_user.id, email=new_user.email, expires_delta=expires_delta)
 
-    # Set session cookie
+    # Set session cookie (Better Auth compatible)
     response.set_cookie(
-        key="session_token",
+        key="better-auth.session_token",
         value=access_token,
         httponly=True,
         secure=settings.environment == "production",
@@ -88,9 +88,9 @@ async def signin(
     expires_at = datetime.utcnow() + expires_delta
     access_token = create_access_token(user_id=user.id, email=user.email, expires_delta=expires_delta)
 
-    # Set session cookie
+    # Set session cookie (Better Auth compatible)
     response.set_cookie(
-        key="session_token",
+        key="better-auth.session_token",
         value=access_token,
         httponly=True,
         secure=settings.environment == "production",
@@ -108,7 +108,7 @@ async def signin(
 async def signout(response: Response):
     """Sign out user by clearing the session cookie."""
     response.delete_cookie(
-        key="session_token",
+        key="better-auth.session_token",
         httponly=True,
         secure=settings.environment == "production",
         samesite="lax",
@@ -122,7 +122,7 @@ async def get_session_info(
     session_db: AsyncSession = Depends(get_session)
 ):
     """Get current session info from cookie."""
-    token = request.cookies.get("session_token")
+    token = request.cookies.get("better-auth.session_token")
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import ChatKitWrapper from "@/components/ChatKitWrapper";
 
 export default function Home() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -77,6 +78,22 @@ export default function Home() {
                 Learn More
               </Button>
             </Link>
+          </div>
+        </div>
+
+        {/* AI Chatbot Section */}
+        <div className="mt-20">
+          <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-8">
+            AI-Powered Task Management
+          </h2>
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
+            Interact with our AI assistant using natural language to manage your tasks effortlessly.
+            Simply type commands like "Add buy groceries" or "Show my tasks".
+          </p>
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
+              Click the chat icon in the bottom-right corner to open the AI assistant
+            </p>
           </div>
         </div>
 

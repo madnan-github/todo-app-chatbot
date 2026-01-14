@@ -3,7 +3,7 @@ MCP (Model Context Protocol) Server for Todo AI Chatbot
 Implements the 5 required tool functions for the AI to manage tasks.
 """
 from typing import Dict, Any, List, Optional
-from .models import Task, Conversation, Message
+from src.models import Task, Conversation, Message
 from .database import get_session
 from sqlmodel import Session, select
 from datetime import datetime

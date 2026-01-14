@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 from sqlmodel import Session
 from .database import get_session
-from .models import Message, Conversation, Task
+from src.models import Message, Conversation, Task
 from .openrouter_agent import process_user_message
 from .mcp_server import add_task, list_tasks, complete_task, delete_task, update_task
 import uuid

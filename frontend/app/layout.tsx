@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "@/hooks/useAuth";
+import AIChatbotToggle from "@/components/AIChatbotToggle";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,7 +29,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-50 dark:bg-gray-900`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {children}
+          <AIChatbotToggle />
+        </AuthProvider>
       </body>
     </html>
   );
