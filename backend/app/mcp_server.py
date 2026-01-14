@@ -13,101 +13,169 @@ def add_task(user_id: str, title: str, description: Optional[str] = None) -> Dic
     """
     Create a new task for a user
     """
-    # In a real implementation, you'd use a database session
-    # For now, simulating the operation
+    # Get a database session and create the task
+    with next(get_session()) as session:
+        task = Task(
+            user_id=user_id,
+            title=title,
+            description=description,
+            completed=False
+        )
+        session.add(task)
+        session.commit()
+        session.refresh(task)  # Refresh to get the auto-generated ID
 
-    # Create a mock task ID
-    task_id = 1  # This would come from the database in a real implementation
+        result = {
+            "task_id": task.id,
+            "status": "created",
+            "title": task.title,
+            "description": task.description
+        }
 
-    result = {
-        "task_id": task_id,
-        "status": "created",
-        "title": title
-    }
-
-    print(f"[MCP] Created task {task_id} for user {user_id}: {title}")
-    return result
+        print(f"[MCP] Created task {task.id} for user {user_id}: {title}")
+        return result
 
 
 def list_tasks(user_id: str, status: str = "all") -> List[Dict[str, Any]]:
     """
     Retrieve tasks for a user, optionally filtered by status
     """
-    # In a real implementation, you'd query the database
-    # For now, returning mock data
+    # Get a database session and query tasks
+    with next(get_session()) as session:
+        # Build the query based on the status filter
+        query = select(Task).where(Task.user_id == user_id)
 
-    # This would be: tasks = session.exec(select(Task).where(Task.user_id == user_id))
-    # And then filter by status if needed
+        if status == "pending":
+            query = query.where(Task.completed == False)
+        elif status == "completed":
+            query = query.where(Task.completed == True)
 
-    mock_tasks = [
-        {"id": 1, "title": "Buy groceries", "completed": False},
-        {"id": 2, "title": "Walk the dog", "completed": True},
-        {"id": 3, "title": "Finish report", "completed": False}
-    ]
+        # Execute the query
+        tasks = session.exec(query).all()
 
-    # Filter based on status if specified
-    if status == "pending":
-        filtered_tasks = [task for task in mock_tasks if not task["completed"]]
-    elif status == "completed":
-        filtered_tasks = [task for task in mock_tasks if task["completed"]]
-    else:  # all
-        filtered_tasks = mock_tasks
+        # Convert to dictionary format
+        task_list = []
+        for task in tasks:
+            task_dict = {
+                "id": task.id,
+                "title": task.title,
+                "description": task.description,
+                "completed": task.completed,
+                "priority": task.priority.value if task.priority else "medium"
+            }
+            task_list.append(task_dict)
 
-    print(f"[MCP] Listed {len(filtered_tasks)} tasks for user {user_id} with status '{status}'")
-    return filtered_tasks
+        print(f"[MCP] Listed {len(task_list)} tasks for user {user_id} with status '{status}'")
+        return task_list
 
 
 def complete_task(user_id: str, task_id: int) -> Dict[str, Any]:
     """
     Mark a task as completed
     """
-    # In a real implementation, you'd update the task in the database
-    # For now, simulating the operation
+    # Get a database session and update the task
+    with next(get_session()) as session:
+        # Find the task for the specific user
+        task = session.exec(
+            select(Task).where(Task.id == task_id, Task.user_id == user_id)
+        ).first()
 
-    result = {
-        "task_id": task_id,
-        "status": "completed",
-        "title": "Mock task title"  # In reality, you'd fetch this from the DB
-    }
+        if task:
+            task.completed = True
+            session.add(task)
+            session.commit()
+            session.refresh(task)
 
-    print(f"[MCP] Completed task {task_id} for user {user_id}")
-    return result
+            result = {
+                "task_id": task.id,
+                "status": "completed",
+                "title": task.title
+            }
+
+            print(f"[MCP] Completed task {task.id} for user {user_id}")
+            return result
+        else:
+            # Task not found for this user
+            print(f"[MCP] Could not find task {task_id} for user {user_id}")
+            return {
+                "task_id": task_id,
+                "status": "not_found",
+                "title": "Task not found"
+            }
 
 
 def delete_task(user_id: str, task_id: int) -> Dict[str, Any]:
     """
     Remove a task
     """
-    # In a real implementation, you'd delete the task from the database
-    # For now, simulating the operation
+    # Get a database session and delete the task
+    with next(get_session()) as session:
+        # Find the task for the specific user
+        task = session.exec(
+            select(Task).where(Task.id == task_id, Task.user_id == user_id)
+        ).first()
 
-    result = {
-        "task_id": task_id,
-        "status": "deleted",
-        "title": "Mock task title"  # In reality, you'd fetch this from the DB
-    }
+        if task:
+            session.delete(task)
+            session.commit()
 
-    print(f"[MCP] Deleted task {task_id} for user {user_id}")
-    return result
+            result = {
+                "task_id": task.id,
+                "status": "deleted",
+                "title": task.title
+            }
+
+            print(f"[MCP] Deleted task {task.id} for user {user_id}")
+            return result
+        else:
+            # Task not found for this user
+            print(f"[MCP] Could not find task {task_id} for user {user_id}")
+            return {
+                "task_id": task_id,
+                "status": "not_found",
+                "title": "Task not found"
+            }
 
 
 def update_task(user_id: str, task_id: int, title: Optional[str] = None, description: Optional[str] = None) -> Dict[str, Any]:
     """
     Modify an existing task
     """
-    # In a real implementation, you'd update the task in the database
-    # For now, simulating the operation
+    # Get a database session and update the task
+    with next(get_session()) as session:
+        # Find the task for the specific user
+        task = session.exec(
+            select(Task).where(Task.id == task_id, Task.user_id == user_id)
+        ).first()
 
-    updated_title = title if title is not None else "Mock task title"
+        if task:
+            # Update the fields if provided
+            if title is not None:
+                task.title = title
+            if description is not None:
+                task.description = description
 
-    result = {
-        "task_id": task_id,
-        "status": "updated",
-        "title": updated_title
-    }
+            session.add(task)
+            session.commit()
+            session.refresh(task)
 
-    print(f"[MCP] Updated task {task_id} for user {user_id}")
-    return result
+            result = {
+                "task_id": task.id,
+                "status": "updated",
+                "title": task.title,
+                "description": task.description
+            }
+
+            print(f"[MCP] Updated task {task.id} for user {user_id}")
+            return result
+        else:
+            # Task not found for this user
+            print(f"[MCP] Could not find task {task_id} for user {user_id}")
+            return {
+                "task_id": task_id,
+                "status": "not_found",
+                "title": "Task not found"
+            }
 
 
 # Placeholder for the actual MCP server implementation
